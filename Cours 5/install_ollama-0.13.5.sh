@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OLLAMA_VERSION=${1:-v0.13.5}
+OLLAMA_VERSION=v0.13.5
 
 OLLAMA_ROOT=$PWD/ollama
 mkdir -p ${OLLAMA_ROOT} || exit 1
@@ -10,16 +10,6 @@ mkdir -p ${OLLAMA_ROOT}/${OLLAMA_VERSION} && {
   wget -O - ${OLLAMA_VERSION_URL} 2>wget.err | tar xzvf - -C ${OLLAMA_ROOT}/${OLLAMA_VERSION}
 }
 
+export LD_LIBRARY_PATH=${OLLAMA_ROOT}/${OLLAMA_VERSION}/lib:${LD_LIBRARY_PATH}
 export PATH=${OLLAMA_ROOT}/${OLLAMA_VERSION}/bin:${PATH}
-
-echo "##### LAUNCHING OLLAMA SERVER..."
-ollama serve &>ollama.log &
-
-sleep 10
-
-echo "##### OLLAMA SERVER LAUNCHED (See logs)"
-cat ollama.log
-
-echo "##### TESTING OLLAMA REQUEST"
-wget http://127.0.0.1:11434 && cat index.html
-echo "The end"
+export OLLAMA_MODELS=${OLLAMA_ROOT}/${OLLAMA_VERSION}/.ollama
